@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Carespace.SDK</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Carespace Team</Authors>
+    <Company>Carespace</Company>
+    <Product>Carespace SDK</Product>
+    <Description>Official .NET SDK for the Carespace API - Build powerful healthcare and rehabilitation applications with ease.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/carespace/sdk-monorepo</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/carespace/sdk-monorepo</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>carespace;healthcare;rehabilitation;api;sdk;dotnet</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
