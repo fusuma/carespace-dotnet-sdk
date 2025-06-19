@@ -391,12 +391,135 @@ We welcome contributions! Please see our [Contributing Guide](../CONTRIBUTING.md
 
 This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
 
+## Troubleshooting
+
+### Common Issues
+
+#### Authentication Errors
+```csharp
+try
+{
+    var response = await client.Users.GetUsersAsync();
+}
+catch (CarespaceAuthenticationException ex)
+{
+    Console.WriteLine($"Authentication failed: {ex.Message}");
+    // Check your API key and ensure it's valid
+    // Verify you're using the correct environment
+}
+```
+
+#### Rate Limiting
+```csharp
+catch (CarespaceRateLimitException ex)
+{
+    Console.WriteLine($"Rate limit exceeded. Retry after: {ex.RetryAfter}");
+    await Task.Delay(ex.RetryAfter ?? TimeSpan.FromSeconds(60));
+    // Retry the request
+}
+```
+
+#### Network Timeout Issues
+```csharp
+var configuration = new CarespaceConfiguration
+{
+    ApiKey = "your-api-key",
+    Timeout = TimeSpan.FromMinutes(5), // Increase timeout
+    MaxRetryAttempts = 5               // Increase retry attempts
+};
+```
+
+#### SSL/Certificate Issues
+```csharp
+// For development environments only - never use in production
+var configuration = new CarespaceConfiguration
+{
+    ApiKey = "your-api-key",
+    IgnoreSSLErrors = true // Only for development
+};
+```
+
+### Performance Considerations
+
+#### Reuse Client Instances
+```csharp
+// Good - reuse client
+using var client = new CarespaceClient("api-key");
+await client.Users.GetUsersAsync();
+await client.Clients.GetClientsAsync();
+
+// Bad - creating multiple clients
+using var client1 = new CarespaceClient("api-key");
+await client1.Users.GetUsersAsync();
+using var client2 = new CarespaceClient("api-key");
+await client2.Clients.GetClientsAsync();
+```
+
+#### Batch Operations
+```csharp
+// Use pagination efficiently
+var allUsers = new List<User>();
+var page = 1;
+const int pageSize = 100; // Larger page sizes for better performance
+
+ApiResponse<List<User>> response;
+do
+{
+    response = await client.Users.GetUsersAsync(page, pageSize);
+    if (response.Success && response.Data != null)
+    {
+        allUsers.AddRange(response.Data);
+    }
+    page++;
+} while (response.HasMore);
+```
+
+### Logging Configuration
+
+#### Enable Detailed Logging
+```csharp
+var configuration = new CarespaceConfiguration
+{
+    ApiKey = "your-api-key",
+    EnableLogging = true,
+    LogLevel = LogLevel.Debug,
+    LogRequestBody = true,  // Log request payloads
+    LogResponseBody = true  // Log response payloads
+};
+```
+
+#### Custom Logger Integration
+```csharp
+using var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder
+        .AddConsole()
+        .AddDebug()
+        .SetMinimumLevel(LogLevel.Information);
+});
+
+var logger = loggerFactory.CreateLogger<CarespaceHttpClient>();
+using var client = new CarespaceClient(configuration, logger);
+```
+
+## Changelog
+
+### Version 1.0.0
+- Initial release of Carespace .NET SDK
+- Full API coverage for Users, Clients, Programs, and Authentication
+- Comprehensive error handling with specific exception types
+- Built-in retry logic with exponential backoff
+- Dependency injection support
+- Complete async/await support
+- Extensive unit test coverage
+
 ## Support
 
 - 📧 Email: [support@carespace.ai](mailto:support@carespace.ai)
 - 💬 [Discord Community](https://discord.gg/carespace)
 - 🐛 [Report Issues](https://github.com/carespace/sdk-monorepo/issues)
 - 📖 [API Documentation](https://docs.carespace.ai/api)
+- 📚 [SDK Documentation](./docs/)
 
 ---
 
